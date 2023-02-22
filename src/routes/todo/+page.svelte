@@ -1,24 +1,58 @@
 <script>
-	// @ts-ignore
-	/**
+
+
+	import { fly, slide } from 'svelte/transition';
+	import { enhance } from '$app/forms';
+
+	 /**
 	 * @type {{ todos: any; }}
 	 */
-	 export let data;
+	  export let data;
+	  // @ts-ignore
+	  export let form;
+	  let creating = false;
+	let deleting = [];
 </script>
 
 <h1>todos</h1>
 
-<form method="POST">
+{#if form?.error}
+<p class="error">{form.error}</p>
+
+{/if}
+<form method="POST" action="?/create" use:enhance={()=>{
+	creating=true;
+
+	return async ({update})=>{
+		await update()
+
+		creating=false;
+	}
+}}>
 	<label>
-		add a todo:
-		<input name="description" />
+		{creating?'saving':'add a todo:'}
+		
+		<input disabled={creating} name="description" id="desc" value={form?.description ?? ''}/>
 	</label>
 </form>
 
 <ul>
-	{#each data.todos as todo (todo.id)}
-		<li class="todo">
-			{todo.description}
+	{#each data.todos.filter((todo)=>!deleting.includes(todo.id)) as todo (todo.id)}
+		<li class="todo" in:fly={{y:20}} out:slide>
+			<form method="post" action="?/delete" use:enhance={()=>{
+				deleting = [...deleting,todo.id];
+
+				return async({update})=>{
+					await update()
+
+					deleting=deleting.filter((id)=>id!==todo.id)
+				};
+			}}>
+				<input type="hidden" name="id" value={todo.id}>
+				<button aria-label="Mars as Complete">✔</button>
+				{todo.description}
+			</form>
+			
 		</li>
 	{/each}
 </ul>

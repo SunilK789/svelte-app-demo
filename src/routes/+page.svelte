@@ -1,3 +1,24 @@
+<script>
+	// @ts-ignore
+	/**
+	 * @type {{ todos: any; }}
+	 */
+	 export let data;
+</script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<h1>todos</h1>
+
+<form method="POST">
+	<label>
+		add a todo:
+		<input name="description" />
+	</label>
+</form>
+
+<ul>
+	{#each data.todos as todo (todo.id)}
+		<li class="todo">
+			{todo.description}
+		</li>+
+	{/each}
+</ul>

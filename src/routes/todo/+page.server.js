@@ -1,5 +1,7 @@
 import * as db from '$lib/server/database.js';
-
+import { fail } from '@sveltejs/kit';
+//const item = import('$lib/server/database.js');
+// @ts-ignore
 export function load({ cookies }) {
 	const id = cookies.get('userid');
 
@@ -13,8 +15,26 @@ export function load({ cookies }) {
 }
 
 export const actions = {
-	default: async ({ cookies, request }) => {
+	// @ts-ignore
+	create: async ({ cookies, request }) => {
+		await new Promise((fulfil) => setTimeout(fulfil, 1000));
 		const data = await request.formData();
-		db.createTodo(cookies.get('userid'), data.get('description'));
+		console.log(data);
+		try {
+			db.createTodo(cookies.get('userid'), data.get('description'));
+		} catch (error) {
+			return fail(422, {
+				description: data.get('description'),
+				// @ts-ignore
+				error: error.message
+			});
+		}
+	},
+	// @ts-ignore
+	delete: async ({ cookies, request }) => {
+		await new Promise((fulfil) => setTimeout(fulfil, 1000));
+		const data = await request.formData();
+		console.log(data);
+		db.deleteTodo(cookies.get('userid'), data.get('id'));
 	}
 };
