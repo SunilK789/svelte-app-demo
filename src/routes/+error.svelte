@@ -1,14 +1,12 @@
 <script>
-
-
-    import { page } from "$app/stores";
-    const emojis={
-       420: '🫠',
+	import { page } from '$app/stores';
+	const emojis = {
+		420: '🫠',
 		500: '💥'
-    }
+	};
 </script>
 
 <h1>{$page.status} {$page.error?.message}</h1>
 <span style="font-size: 10em;">
-   { emojis[$page.status]??emojis[500]}
+	{emojis[$page.status] ?? emojis[500]}
 </span>
